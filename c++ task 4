@@ -1,0 +1,85 @@
+#include <iostream>
+#include <vector>
+#include <string>
+using namespace std;
+
+struct Task {
+    string description;
+    bool completed;
+};
+
+void addTask(vector<Task>& tasks, const string& description) {
+    Task newTask;
+    newTask.description = description;
+    newTask.completed = false;
+    tasks.push_back(newTask);
+}
+
+void viewTasks(const vector<Task>& tasks) {
+    cout << "Tasks:\n";
+    for (const Task& task : tasks) {
+        cout << (task.completed ? "[X] " : "[ ] ") << task.description << endl;
+    }
+}
+
+void markCompleted(vector<Task>& tasks, int index) {
+    if (index >= 0 && index < tasks.size()) {
+        tasks[index].completed = true;
+        cout << "Task marked as completed.\n";
+    } else {
+        cout << "Invalid task index.\n";
+    }
+}
+
+void removeTask(vector<Task>& tasks, int index) {
+    if (index >= 0 && index < tasks.size()) {
+        tasks.erase(tasks.begin() + index);
+        cout << "Task removed.\n";
+    } else {
+        cout << "Invalid task index.\n";
+    }
+}
+
+int main() {
+    vector<Task> tasks;
+
+    while (true) {
+        cout << "To-Do List Manager\n";
+        cout << "1. Add task\n";
+        cout << "2. View tasks\n";
+        cout << "3. Mark task as completed\n";
+        cout << "4. Remove task\n";
+        cout << "5. Exit\n";
+        int choice;
+        cin >> choice;
+
+        switch (choice) {
+            case 1:
+                cout << "Enter task description: ";
+                cin.ignore(); // Clear newline from previous input
+                string description;
+                getline(cin, description);
+                addTask(tasks, description);
+                break;
+            case 2:
+                viewTasks(tasks);
+                break;
+            case 3:
+                cout << "Enter task index to mark as completed: ";
+                int index;
+                cin >> index;
+                markCompleted(tasks, index);
+                break;
+            case 4:
+                cout << "Enter task index to remove: ";
+                cin >> index;
+                removeTask(tasks, index);
+                break;
+            case 5:
+                cout << "Exiting. Have a productive day!\n";
+                return 0;
+            default:
+                cout << "Invalid choice. Try again.\n";
+        }
+    }
+}
