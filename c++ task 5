@@ -1,0 +1,45 @@
+// mainwindow.cpp
+#include "mainwindow.h"
+#include "ui_mainwindow.h"
+#include <QFileDialog>
+#include <opencv2/opencv.hpp>
+
+MainWindow::MainWindow(QWidget *parent) :
+    QMainWindow(parent),
+    ui(new Ui::MainWindow)
+{
+    ui->setupUi(this);
+}
+
+MainWindow::~MainWindow()
+{
+    delete ui;
+}
+
+void MainWindow::on_loadImageButton_clicked()
+{
+    QString filename = QFileDialog::getOpenFileName(this, tr("Open Image"), "", tr("Image Files (*.png *.jpg *.jpeg *.bmp)"));
+    if (!filename.isEmpty()) {
+        image = QImage(filename);
+        displayImage(image);
+    }
+}
+
+void MainWindow::displayImage(const QImage &img)
+{
+    ui->imageLabel->setPixmap(QPixmap::fromImage(img));
+}
+
+void MainWindow::on_grayscaleButton_clicked()
+{
+    applyGrayscale();
+}
+
+void MainWindow::applyGrayscale()
+{
+    cv::Mat cvImage = cv::Mat(image.height(), image.width(), CV_8UC4, const_cast<uchar*>(image.constBits()), image.bytesPerLine()).clone();
+    cv::Mat grayImage;
+    cv::cvtColor(cvImage, grayImage, cv::COLOR_BGR2GRAY);
+    processedImage = QImage(grayImage.data, grayImage.cols, grayImage.rows, grayImage.step, QImage::Format_Grayscale8);
+    displayImage(processedImage);
+}
